@@ -3,9 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Icon from "@/components/ui/icon";
+import { useState } from "react";
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const DiamondExchange = () => {
+  const [selectedDiamond, setSelectedDiamond] = useState(null);
+  
   const marketStats = [
     { label: "Общий объем", value: "$847M", change: "+12.4%" },
     { label: "Активные лоты", value: "2,847", change: "+5.8%" },
@@ -23,6 +28,7 @@ const DiamondExchange = () => {
       price: "$45,000",
       roi: "+15.2%",
       certificate: "GIA",
+      image: "/img/24af8aec-3545-4563-abd7-768dcc4f9d16.jpg",
     },
     {
       id: 2,
@@ -33,6 +39,7 @@ const DiamondExchange = () => {
       price: "$28,500",
       roi: "+22.1%",
       certificate: "GIA",
+      image: "/img/bbb81042-4cca-4a54-958f-d01d1ad3d115.jpg",
     },
     {
       id: 3,
@@ -43,6 +50,7 @@ const DiamondExchange = () => {
       price: "$72,800",
       roi: "+8.9%",
       certificate: "AGS",
+      image: "/img/07c102c5-a3d8-41c5-a303-c3a9fb616a26.jpg",
     },
   ];
 
@@ -51,6 +59,31 @@ const DiamondExchange = () => {
     { asset: "Белые алмазы премиум", allocation: 45, value: "$2.7M" },
     { asset: "Желтые алмазы", allocation: 15, value: "$900K" },
     { asset: "Голубые алмазы", allocation: 5, value: "$300K" },
+  ];
+
+  const priceData = [
+    { month: "Янв", value: 95000 },
+    { month: "Фев", value: 98000 },
+    { month: "Мар", value: 102000 },
+    { month: "Апр", value: 108000 },
+    { month: "Май", value: 112000 },
+    { month: "Июн", value: 118000 },
+    { month: "Июл", value: 125000 },
+    { month: "Авг", value: 131000 },
+    { month: "Сен", value: 128000 },
+    { month: "Окт", value: 134000 },
+    { month: "Ноя", value: 142000 },
+    { month: "Дек", value: 148000 },
+  ];
+
+  const indexData = [
+    { day: "1", price: 138 },
+    { day: "2", price: 142 },
+    { day: "3", price: 139 },
+    { day: "4", price: 145 },
+    { day: "5", price: 148 },
+    { day: "6", price: 144 },
+    { day: "7", price: 147 },
   ];
 
   return (
@@ -162,8 +195,12 @@ const DiamondExchange = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="flex justify-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg">
-                        <Icon name="Diamond" size={64} className="text-gold" />
+                      <div className="flex justify-center py-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden">
+                        <img 
+                          src={diamond.image} 
+                          alt={`Алмаз ${diamond.carat} карат`}
+                          className="w-32 h-32 object-cover rounded-lg"
+                        />
                       </div>
                       
                       <div className="grid grid-cols-2 gap-3 text-sm">
@@ -187,9 +224,79 @@ const DiamondExchange = () => {
 
                       <div className="flex items-center justify-between pt-4 border-t border-border">
                         <p className="text-2xl font-bold text-foreground">{diamond.price}</p>
-                        <Button className="bg-gold hover:bg-gold-dark text-black font-medium">
-                          Купить
-                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              className="bg-gold hover:bg-gold-dark text-black font-medium"
+                              onClick={() => setSelectedDiamond(diamond)}
+                            >
+                              Купить
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-md">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center space-x-2">
+                                <Icon name="Diamond" size={20} className="text-gold" />
+                                <span>Покупка алмаза {diamond.carat} карат</span>
+                              </DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-6 py-4">
+                              <div className="flex justify-center">
+                                <img 
+                                  src={diamond.image} 
+                                  alt={`Алмаз ${diamond.carat} карат`}
+                                  className="w-40 h-40 object-cover rounded-lg"
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Вес:</span>
+                                    <span className="font-medium">{diamond.carat} карат</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Цвет:</span>
+                                    <span className="font-medium">{diamond.color}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Чистота:</span>
+                                    <span className="font-medium">{diamond.clarity}</span>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Огранка:</span>
+                                    <span className="font-medium">{diamond.cut}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">ROI:</span>
+                                    <span className="font-medium text-green-600">{diamond.roi}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Сертификат:</span>
+                                    <span className="font-medium">{diamond.certificate}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="border-t pt-4">
+                                <div className="flex items-center justify-between mb-4">
+                                  <span className="text-lg font-semibold">Стоимость:</span>
+                                  <span className="text-2xl font-bold text-foreground">{diamond.price}</span>
+                                </div>
+                                <div className="flex space-x-3">
+                                  <Button className="flex-1 bg-gold hover:bg-gold-dark text-black font-medium">
+                                    <Icon name="CreditCard" size={16} className="mr-2" />
+                                    Купить сейчас
+                                  </Button>
+                                  <Button variant="outline" className="flex-1">
+                                    <Icon name="Heart" size={16} className="mr-2" />
+                                    В избранное
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </CardContent>
                   </Card>
@@ -235,13 +342,27 @@ const DiamondExchange = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 flex items-center justify-center bg-gradient-to-br from-gold/5 to-gold/10 rounded-lg">
-                      <div className="text-center">
-                        <Icon name="BarChart3" size={48} className="text-gold mx-auto mb-3" />
-                        <p className="text-muted-foreground">График доходности</p>
-                        <p className="text-2xl font-bold text-green-600 mt-2">+24.7%</p>
-                        <p className="text-sm text-muted-foreground">за последний год</p>
-                      </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={priceData}>
+                          <CartesianGrid strokeDasharray="3 3" className="opacity-20" />
+                          <XAxis dataKey="month" fontSize={12} className="text-muted-foreground" />
+                          <YAxis fontSize={12} className="text-muted-foreground" />
+                          <Tooltip 
+                            formatter={["$[0]", "Доходность"]}
+                            labelStyle={{ color: "black" }}
+                            contentStyle={{ backgroundColor: "white", border: "1px solid #ccc" }}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="#c9a961" 
+                            fill="#c9a961" 
+                            fillOpacity={0.2}
+                            strokeWidth={2}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
@@ -260,12 +381,26 @@ const DiamondExchange = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-                      <div className="text-center">
-                        <Icon name="LineChart" size={48} className="text-blue-600 mx-auto mb-3" />
-                        <p className="text-3xl font-bold text-blue-600">142.8</p>
-                        <p className="text-sm text-muted-foreground mt-1">+0.9% за месяц</p>
-                      </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={indexData}>
+                          <CartesianGrid strokeDasharray="3 3" className="opacity-20" />
+                          <XAxis dataKey="day" fontSize={12} className="text-muted-foreground" />
+                          <YAxis fontSize={12} className="text-muted-foreground" />
+                          <Tooltip 
+                            formatter={[[0], "Индекс"]}
+                            labelStyle={{ color: "black" }}
+                            contentStyle={{ backgroundColor: "white", border: "1px solid #ccc" }}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="price" 
+                            stroke="#3b82f6" 
+                            strokeWidth={3}
+                            dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
